@@ -5,5 +5,5 @@ from . import views
 # URLS do app recipes
 urlpatterns = [
     path('', views.home),
-    path('recipes/<int:id>/', views.recipe),
+    path('recipe/<int:id>/', views.recipe),
 ]
