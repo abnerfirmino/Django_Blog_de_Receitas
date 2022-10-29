@@ -1,9 +1,14 @@
+from unicodedata import name
+
 from django.urls import path
 
 from . import views
 
+# Pattern App name
+app_name = 'recipes'
+
 # URLS do app recipes
 urlpatterns = [
-    path('', views.home),
-    path('recipe/<int:id>/', views.recipe),
+    path('', views.home, name="home"),
+    path('recipe/<int:id>/', views.recipe, name="recipe"),
 ]
