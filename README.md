@@ -1,1 +1,1 @@
-# Blog de Receitas com Django
+# Blog de Receitas
