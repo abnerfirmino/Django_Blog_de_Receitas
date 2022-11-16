@@ -1,1 +1,1 @@
-# Django projeto 1
+# Blog de Receitas
