@@ -25,11 +25,17 @@ class Recipe(models.Model):
     cover = models.ImageField(
         upload_to='recipes/covers/%Y/%m/%d/', blank=True, default='')
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, blank=True, default=None
+        Category, on_delete=models.SET_NULL, null=True, blank=True,
+        default=None,
     )
     author = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True
     )
+
+    @property
+    def cover_url(self):
+        if self.cover and hasattr(self.cover, 'url'):
+            return self.cover.url
 
     def __str__(self) -> str:
         return self.title

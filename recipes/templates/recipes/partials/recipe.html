@@ -1,7 +1,7 @@
 <div class="recipe-list-item recipe">
     <div class="recipe-cover">
         <a href="{% url 'recipes:recipe' recipe.id %}">
-            <img src="{{ recipe.cover.url }}" alt="Temporário">
+            <img src="{{ recipe.cover_url|default_if_none:'#' }}" />
         </a>
     </div>
     <div class="recipe-title-container">
