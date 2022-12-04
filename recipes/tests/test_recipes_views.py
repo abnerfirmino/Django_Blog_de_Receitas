@@ -5,32 +5,9 @@ from recipes import views
 from recipes.models import Category, Recipe, User
 
 
-class RecipeViewsTest(TestCase):
-    # Resolve testa as funções utilizada pelas URLs
-    def test_recipes_home_view_function_is_correct(self):
-        view = resolve(reverse('recipes:home'))
-        self.assertIs(view.func, views.home)
-
-    # Teste de resposta do Status Code
-    def test_recipes_home_view_returns_status_code_200_ok(self):
-        response = self.client.get(reverse('recipes:home'))
-        self.assertEqual(response.status_code, 200)
-
-    # Teste de templates
-    def test_recipes_home_view_load_correct_template(self):
-        response = self.client.get(reverse('recipes:home'))
-        self.assertTemplateUsed(response, 'recipes/pages/home.html')
-
-    # Testa a resposta quando não têm receitas
-    def test_recipes_home_shows_no_recipes_found(self):
-        response = self.client.get(reverse('recipes:home'))
-        self.assertIn(
-            'Nenhuma receita encontrada',
-            response.content.decode('utf-8')
-        )
-
-    # Testa se o template home carrega receitas
-    def test_recipe_home_template_loads_recipes(self):
+class RecipeTestBase(TestCase):
+    # método que executa antes de cada teste unitário
+    def setUp(self) -> None:
         category = Category.objects.create(name='Category')
         author = User.objects.create_user(
             first_name='user',
@@ -53,18 +30,15 @@ class RecipeViewsTest(TestCase):
             preparation_steps_is_html=False,
             is_published=True,
         )
-        response = self.client.get(reverse('recipes:home'))
-        # Testa o contexto de recipes
-        response_recipes = response.context['recipes']
+        return super().setUp()
 
-        # testa o conteúdo retornado pela recipes
-        content = response.content.decode('utf-8')
-        self.assertIn('Recipe Title', content)
-        self.assertIn('Porções', content)
-        self.assertEqual(len(response_recipes), 1)
+
+class RecipeViewsTest(RecipeTestBase):
+    # método que executa depois de cada teste unitário
+    def tearDown(self) -> None:
+        return super().tearDown()
 
     # Testa se a função da pág. categorias está correta
-
     def test_recipes_category_view_function_is_correct(self):
         view = resolve(reverse('recipes:category', kwargs={'category_id': 1}))
         self.assertIs(view.func, views.category)
@@ -87,3 +61,26 @@ class RecipeViewsTest(TestCase):
             reverse('recipes:recipe', kwargs={'id': 1000})
         )
         self.assertEqual(response.status_code, 404)
+
+    # Resolve testa as funções utilizada pelas URLs
+    def test_recipes_home_view_function_is_correct(self):
+        view = resolve(reverse('recipes:home'))
+        self.assertIs(view.func, views.home)
+
+    # Teste de resposta do Status Code
+    def test_recipes_home_view_returns_status_code_200_ok(self):
+        response = self.client.get(reverse('recipes:home'))
+        self.assertEqual(response.status_code, 200)
+
+    # Teste de templates
+    def test_recipes_home_view_load_correct_template(self):
+        response = self.client.get(reverse('recipes:home'))
+        self.assertTemplateUsed(response, 'recipes/pages/home.html')
+
+    # Testa a resposta quando não têm receitas
+    def test_recipes_home_shows_no_recipes_found(self):
+        response = self.client.get(reverse('recipes:home'))
+        self.assertIn(
+            'Nenhuma receita encontrada',
+            response.content.decode('utf-8')
+        )
