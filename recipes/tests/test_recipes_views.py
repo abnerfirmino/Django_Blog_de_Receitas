@@ -2,14 +2,10 @@ from django.urls import resolve, reverse
 
 from recipes import views
 
-from .test_recipes_base import Recipe, RecipeTestBase
+from .test_recipes_base import RecipeTestBase
 
 
 class RecipeViewsTest(RecipeTestBase):
-    # método que executa depois de cada teste unitário
-    def tearDown(self) -> None:
-        return super().tearDown()
-
     # Testa se a função da pág. categorias está correta
     def test_recipes_category_view_function_is_correct(self):
         view = resolve(reverse('recipes:category', kwargs={'category_id': 1}))
@@ -51,14 +47,15 @@ class RecipeViewsTest(RecipeTestBase):
 
     # Testa a resposta quando não têm receitas
     def test_recipes_home_template_shows_no_recipes_found(self):
-        Recipe.objects.get(pk=1).delete()
         response = self.client.get(reverse('recipes:home'))
         self.assertIn(
             'Nenhuma receita encontrada',
             response.content.decode('utf-8')
         )
 
+    # Testa se a receita está sendo criada
     def test_recipes_home_template_loads_recipes(self):
+        self.make_recipe()
         response = self.client.get(reverse('recipes:home'))
         content = response.content.decode('utf-8')
         response_context_recipes = response.context['recipes']
